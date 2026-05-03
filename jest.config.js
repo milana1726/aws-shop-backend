@@ -6,4 +6,6 @@ module.exports = {
     "^.+\\.tsx?$": "ts-jest",
   },
   setupFilesAfterEnv: ["aws-cdk-lib/testhelpers/jest-autoclean"],
+  collectCoverage: true,
+  coveragePathIgnorePatterns: ["/node_modules/", "/test/mocks"],
 };
