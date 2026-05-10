@@ -43,11 +43,22 @@ export class ProductServiceStack extends cdk.Stack {
       environment,
     });
 
+    const createProduct = new NodejsFunction(this, "CreateProduct", {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      entry: path.join(__dirname, "../lambda/createProduct.ts"),
+      handler: "handler",
+      functionName: "CreateProduct",
+      environment,
+    });
+
     productsTable.grantReadData(getProductsList);
     stocksTable.grantReadData(getProductsList);
 
     productsTable.grantReadData(getProductById);
     stocksTable.grantReadData(getProductById);
+
+    productsTable.grantWriteData(createProduct);
+    stocksTable.grantWriteData(createProduct);
 
     const api = new apigateway.RestApi(this, "ProductsApi", {
       restApiName: "Product Service",
@@ -62,6 +73,7 @@ export class ProductServiceStack extends cdk.Stack {
       "GET",
       new apigateway.LambdaIntegration(getProductsList),
     );
+    products.addMethod("POST", new apigateway.LambdaIntegration(createProduct));
 
     const product = products.addResource("{productId}");
     product.addMethod("GET", new apigateway.LambdaIntegration(getProductById));
