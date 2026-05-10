@@ -15,21 +15,26 @@ const docClient = DynamoDBDocumentClient.from(
 
 const seedData = [
   {
-    title: "Golden Orchid",
-    description: "Exotic orchid with bright golden petals",
+    title: "Phalaenopsis Golden Beauty",
+
+    description:
+      "Golden Beauty Phalaenopsis with warm yellow flowers and long blooming period.",
     price: 45,
     count: 5,
   },
   {
-    title: "White Lily",
-    description: "Elegant flower with soft fragrance",
-    price: 30,
+    title: "Dendrobium Nobile",
+
+    description:
+      "Dendrobium Nobile orchid with delicate fragrant flowers on elegant canes.",
+    price: 60,
     count: 8,
   },
   {
-    title: "Spring Tulip Set",
-    description: "Colorful tulips perfect for spring gardens",
-    price: 25,
+    title: "Cattleya Labiata",
+    description:
+      "Classic Cattleya Labiata orchid famous for large vivid blooms and strong fragrance.",
+    price: 70,
     count: 6,
   },
 ];
