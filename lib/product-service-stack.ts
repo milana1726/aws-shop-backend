@@ -28,7 +28,7 @@ export class ProductServiceStack extends cdk.Stack {
     };
 
     const getProductsList = new NodejsFunction(this, "GetProductsList", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../lambda/getProductsList.ts"),
       handler: "handler",
       functionName: "GetProductsList",
@@ -36,7 +36,7 @@ export class ProductServiceStack extends cdk.Stack {
     });
 
     const getProductById = new NodejsFunction(this, "GetProductById", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../lambda/getProductById.ts"),
       handler: "handler",
       functionName: "GetProductById",
@@ -44,7 +44,7 @@ export class ProductServiceStack extends cdk.Stack {
     });
 
     const createProduct = new NodejsFunction(this, "CreateProduct", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../lambda/createProduct.ts"),
       handler: "handler",
       functionName: "CreateProduct",
