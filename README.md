@@ -1,14 +1,56 @@
-# Welcome to your CDK TypeScript project
+# 🛒 AWS Shop Backend
 
-This is a blank project for CDK development with TypeScript.
+Backend service for product management built with AWS Lambda, API Gateway and DynamoDB.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+---
 
-## Useful commands
+## 🚀 Overview
 
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
-- `npx cdk deploy` deploy this stack to your default AWS account/region
-- `npx cdk diff` compare deployed stack with current state
-- `npx cdk synth` emits the synthesized CloudFormation template
+Implementing Product Service with the following features:
+
+- Retrieve all products
+- Retrieve product by ID
+- Create new product with stock
+
+---
+
+## ✅ API Endpoints
+
+| Method | Endpoint              | Description                     |
+| ------ | --------------------- | ------------------------------- |
+| GET    | /products             | Get list of products with stock |
+| GET    | /products/{productId} | Get product by ID               |
+| POST   | /products             | Create new product              |
+
+---
+
+## ✅ Example Request
+
+```json
+POST /products
+```
+
+{
+"title": "Oncidium Orchid",
+"description": "Elegant orchid with delicate golden flowers",
+"price": 120,
+"count": 3
+}
+
+## ✅ Example Response
+
+{
+"id": "generated-uuid"
+}
+
+---
+
+## Scripts
+
+```
+npm run build         # compile TypeScript
+npm run test          # run tests with coverage
+npm run cdk:deploy    # deploy backend
+npm run cdk:destroy   # destroy stack
+npm run seed          # populate DynamoDB
+```
