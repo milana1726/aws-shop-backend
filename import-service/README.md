@@ -1,14 +1,41 @@
-# Welcome to your CDK TypeScript project
+# 📥 Import Service
 
-This is a blank project for CDK development with TypeScript.
+Backend service for importing product data using AWS Lambda, API Gateway, and S3.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+---
 
-## Useful commands
+## 🚀 Overview
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+Import Service implements a file upload and processing pipeline:
+
+- Generate presigned URL for secure file upload
+- Upload CSV files to S3
+- Automatically parse CSV files using Lambda
+- Move processed files from `uploaded/` to `parsed/`
+
+---
+
+## ✅ API Endpoint
+
+| Method | Endpoint            | Description                       |
+| ------ | ------------------- | --------------------------------- |
+| GET    | /import?name=<file> | Generate presigned URL for upload |
+
+---
+
+## ✅ Example Request
+
+```http
+GET /import?name=products.csv
+```
+
+---
+
+## Scripts
+
+```
+npm run build         # compile TypeScript
+npm run test          # run tests with coverage
+npm run cdk:deploy    # deploy backend
+npm run cdk:destroy   # destroy stack
+```
