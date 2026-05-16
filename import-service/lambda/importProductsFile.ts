@@ -6,7 +6,7 @@ const s3 = new S3Client({ region: process.env.AWS_REGION });
 
 const BUCKET = process.env.BUCKET!;
 const UPLOAD_PREFIX = "uploaded/";
-const SIGNED_URL_EXPIRATION = 60;
+const SIGNED_URL_EXPIRATION = 3600;
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   const fileName = event.queryStringParameters?.name;
