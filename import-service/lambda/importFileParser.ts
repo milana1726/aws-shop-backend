@@ -5,7 +5,7 @@ import {
   DeleteObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-import csvParser from "csv-parser";
+import csvParser = require("csv-parser");
 
 const s3 = new S3Client({ region: process.env.AWS_REGION });
 
