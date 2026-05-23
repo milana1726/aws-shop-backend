@@ -10,7 +10,10 @@ import * as sns from "aws-cdk-lib/aws-sns";
 import * as subs from "aws-cdk-lib/aws-sns-subscriptions";
 import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 
-const EMAIL = "melnychuk.frontend.dev@gmail.com";
+const PRIMARY_EMAIL = "melnychuk.frontend.dev@gmail.com";
+const EXPENSIVE_EMAIL = "melnychuk.frontend.dev+expensive@gmail.com";
+const CHEAP_EMAIL = "melnychuk.frontend.dev+cheap@gmail.com";
+
 export class ProductServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -24,11 +27,28 @@ export class ProductServiceStack extends cdk.Stack {
       topicName: "createProductTopic",
     });
 
+    // all products
     createProductTopic.addSubscription(
-      new subs.EmailSubscription(EMAIL, {
+      new subs.EmailSubscription(PRIMARY_EMAIL),
+    );
+
+    // expensive products( price > 100)
+    createProductTopic.addSubscription(
+      new subs.EmailSubscription(EXPENSIVE_EMAIL, {
         filterPolicy: {
           price: sns.SubscriptionFilter.numericFilter({
             greaterThan: 100,
+          }),
+        },
+      }),
+    );
+
+    // cheap products( price <= 100)
+    createProductTopic.addSubscription(
+      new subs.EmailSubscription(CHEAP_EMAIL, {
+        filterPolicy: {
+          price: sns.SubscriptionFilter.numericFilter({
+            lessThanOrEqualTo: 100,
           }),
         },
       }),
