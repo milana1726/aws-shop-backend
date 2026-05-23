@@ -1,5 +1,5 @@
 {
-  "name": "aws-shop-backend",
+  "name": "product-service",
   "version": "0.1.0",
   "scripts": {
     "build": "tsc",
