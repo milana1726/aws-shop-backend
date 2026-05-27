@@ -6,7 +6,9 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "path";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import * as sqs from "aws-cdk-lib/aws-sqs";
 
+const CATALOG_QUEUE_NAME = "catalogItemsQueue";
 export class ImportServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -29,6 +31,14 @@ export class ImportServiceStack extends cdk.Stack {
       autoDeleteObjects: true,
     });
 
+    const catalogItemsQueue = sqs.Queue.fromQueueArn(
+      this,
+      "CatalogItemsQueue",
+      `arn:aws:sqs:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:${CATALOG_QUEUE_NAME}`,
+    );
+
+    const queueUrl = `https://sqs.${this.region}.amazonaws.com/${this.account}/${CATALOG_QUEUE_NAME}`;
+
     const importProductsFile = new NodejsFunction(this, "ImportProductsFile", {
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../lambda/importProductsFile.ts"),
@@ -44,10 +54,15 @@ export class ImportServiceStack extends cdk.Stack {
       entry: path.join(__dirname, "../lambda/importFileParser.ts"),
       handler: "handler",
       functionName: "ImportFileParser",
+      environment: {
+        SQS_URL: queueUrl,
+      },
     });
 
     importServiceBucket.grantPut(importProductsFile);
     importServiceBucket.grantReadWrite(importFileParser);
+
+    catalogItemsQueue.grantSendMessages(importFileParser);
 
     importServiceBucket.addEventNotification(
       s3.EventType.OBJECT_CREATED,
