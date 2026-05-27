@@ -1,14 +1,79 @@
-# Welcome to your CDK TypeScript project
+# 🔐 Authorization Service
 
-This is a blank project for CDK development with TypeScript.
+Backend service responsible for request authentication using AWS Lambda Authorizer.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+---
 
-## Useful commands
+## 🚀 Overview
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+Authorization Service provides Basic Authentication for protected API endpoints.
+
+- Validate Authorization header (Basic token)
+- Decode and verify user credentials
+- Allow or deny access using IAM policy
+- Prevent unauthorized access to protected resources
+
+---
+
+## ✅ Authorization Flow
+
+- Client sends request with Authorization header:  
+  `Authorization: Basic <base64(login:password)>`
+- API Gateway invokes `basicAuthorizer` Lambda
+- Lambda:
+  - Decodes base64 token
+  - Extracts username and password
+  - Verifies credentials against environment variables
+
+- Returns IAM policy:
+  - ✅ Allow → request continues to target Lambda
+  - ❌ Deny → API returns 403 Forbidden
+  - ❌ Missing header → API returns 401 Unauthorized
+
+---
+
+## ✅ Configuration
+
+Credentials are provided via environment variables:
+
+```
+GITHUB_LOGIN=your_github_login
+TEST_PASSWORD=TEST_PASSWORD
+```
+
+`.env` file is used locally and **must not be committed to GitHub**.
+
+---
+
+## ✅ Integration
+
+This service is used as a **Lambda Authorizer** in Import Service:
+
+- Protects `/import` endpoint
+- Ensures only authorized users can upload files
+
+---
+
+## ✅ Example
+
+**Generate token:**
+
+```
+echo -n "your_github_login:TEST_PASSWORD" | base64
+```
+
+**Request:**
+
+```
+GET /import?name=products.csv
+Authorization: Basic <token>
+```
+
+## Scripts
+
+```
+npm run build         # compile TypeScript
+npm run test          # run tests with coverage
+npm run cdk:deploy    # deploy backend
+npm run cdk:destroy   # destroy stack
+```
