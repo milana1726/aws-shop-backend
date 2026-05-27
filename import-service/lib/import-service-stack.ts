@@ -92,6 +92,23 @@ export class ImportServiceStack extends cdk.Stack {
       },
     });
 
+    // CORS headers to API Gateway error responses (401/403)
+    api.addGatewayResponse("UnauthorizedResponse", {
+      type: apigateway.ResponseType.UNAUTHORIZED,
+      responseHeaders: {
+        "Access-Control-Allow-Origin": "'*'",
+        "Access-Control-Allow-Headers": "'*'",
+      },
+    });
+
+    api.addGatewayResponse("AccessDeniedResponse", {
+      type: apigateway.ResponseType.ACCESS_DENIED,
+      responseHeaders: {
+        "Access-Control-Allow-Origin": "'*'",
+        "Access-Control-Allow-Headers": "'*'",
+      },
+    });
+
     const importResource = api.root.addResource("import");
     importResource.addMethod(
       "GET",
