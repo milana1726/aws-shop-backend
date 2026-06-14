@@ -1,4 +1,4 @@
-import * as cdk from "aws-cdk-lib/core";
+import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as s3n from "aws-cdk-lib/aws-s3-notifications";
@@ -59,6 +59,18 @@ export class ImportServiceStack extends cdk.Stack {
       },
     });
 
+    const basicAuthorizer = lambda.Function.fromFunctionArn(
+      this,
+      "ImportedAuthorizer",
+      cdk.Fn.importValue("BasicAuthorizerArn"),
+    );
+
+    const authorizer = new apigateway.TokenAuthorizer(this, "BasicAuthorizer", {
+      handler: basicAuthorizer,
+      identitySource: apigateway.IdentitySource.header("Authorization"),
+      resultsCacheTtl: cdk.Duration.seconds(0),
+    });
+
     importServiceBucket.grantPut(importProductsFile);
     importServiceBucket.grantReadWrite(importFileParser);
 
@@ -80,11 +92,30 @@ export class ImportServiceStack extends cdk.Stack {
       },
     });
 
+    // CORS headers to API Gateway error responses (401/403)
+    api.addGatewayResponse("UnauthorizedResponse", {
+      type: apigateway.ResponseType.UNAUTHORIZED,
+      responseHeaders: {
+        "Access-Control-Allow-Origin": "'*'",
+        "Access-Control-Allow-Headers": "'*'",
+      },
+    });
+
+    api.addGatewayResponse("AccessDeniedResponse", {
+      type: apigateway.ResponseType.ACCESS_DENIED,
+      responseHeaders: {
+        "Access-Control-Allow-Origin": "'*'",
+        "Access-Control-Allow-Headers": "'*'",
+      },
+    });
+
     const importResource = api.root.addResource("import");
     importResource.addMethod(
       "GET",
       new apigateway.LambdaIntegration(importProductsFile),
       {
+        authorizer,
+        authorizationType: apigateway.AuthorizationType.CUSTOM,
         requestParameters: {
           "method.request.querystring.name": true,
         },
